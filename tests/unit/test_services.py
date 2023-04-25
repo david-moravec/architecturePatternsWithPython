@@ -9,7 +9,8 @@ class FakeRepository(repository.AbstractProductRepository):
         self._products = set(products)
 
     def add(self, batch):
-        self.get(batch.sku).batches.add(batch)
+        self.get(batch.sku).add_batch(batch)
+        
 
     def get(self, sku):
         product = next((p for p in self._products if p.sku == sku), None)

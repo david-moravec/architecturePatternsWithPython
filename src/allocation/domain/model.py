@@ -24,6 +24,10 @@ class Product:
         self.batches = set(batches)
         self.sku = sku
 
+    def add_batch(self, batch: Batch):
+        if self.sku == batch.sku:
+            self.batches.add(batch)
+
     def allocate(self, line):
         return allocate(line, self.batches)
 
