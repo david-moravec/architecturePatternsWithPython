@@ -1,20 +1,29 @@
 import pytest
+from src.allocation.domain.model import Product
 from src.allocation.adapters import repository
 from src.allocation.service_layer import services, unit_of_work
 
 
-class FakeRepository(repository.AbstractRepository):
-    def __init__(self, batches):
-        self._batches = set(batches)
+class FakeRepository(repository.AbstractProductRepository):
+    def __init__(self, products):
+        self._products = set(products)
 
     def add(self, batch):
-        self._batches.add(batch)
+        self.get(batch.sku).batches.add(batch)
 
     def get(self, sku):
-        return next((p for p in self._batches if p.sku == sku), None)
+        product = next((p for p in self._products if p.sku == sku), None)
+        
+        if product is None:
+            new_product = Product(sku=sku, batches=[])
+            self._products.add(new_product)
+            return new_product
+
+        return product
+
 
     def list(self):
-        return list(self._batches)
+        return list(self._products)
 
 
 class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
