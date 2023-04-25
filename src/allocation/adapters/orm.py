@@ -20,7 +20,7 @@ batches = Table(
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("reference", String(255)),
-    Column("sku", String(255)),
+    Column("sku", ForeignKey("products.sku")),
     Column("_purchased_quantity", Integer, nullable=False),
     Column("eta", Date, nullable=True),
 )
@@ -28,8 +28,7 @@ batches = Table(
 products = Table(
     "products",
     metadata,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("sku", String(255)),
+    Column("sku", String(255), primary_key=True),
 )
 
 allocations = Table(
@@ -55,8 +54,5 @@ def start_mappers():
     mapper(
         model.Product,
         products,
-        properties={
-            "_batches": relationship(
-                batches_mapper,
-                collection_class=set)}
+        properties={"batches": relationship(batches_mapper)}
     )
